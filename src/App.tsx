@@ -12,6 +12,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [coinValue, setCoinValue] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [isContactVisible, setIsContactVisible] = useState(false);
 
   // Animate coin value from 0 to 100 on page load
   useEffect(() => {
@@ -39,6 +40,27 @@ function App() {
     }, 500);
     
     return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Check if contact section is visible
+  useEffect(() => {
+    const checkContactVisibility = () => {
+      const contactSection = document.getElementById('contact');
+      if (contactSection) {
+        const rect = contactSection.getBoundingClientRect();
+        const isVisible = rect.top <= window.innerHeight && rect.bottom >= 0;
+        setIsContactVisible(isVisible);
+      }
+    };
+
+    checkContactVisibility();
+    window.addEventListener('scroll', checkContactVisibility);
+    window.addEventListener('resize', checkContactVisibility);
+
+    return () => {
+      window.removeEventListener('scroll', checkContactVisibility);
+      window.removeEventListener('resize', checkContactVisibility);
+    };
   }, []);
 
   // Scroll to top on page load/refresh
@@ -91,7 +113,7 @@ function App() {
           onScore={handleScore}
         />
         <Projects />
-        <Contact />
+        <Contact isContactVisible={isContactVisible} />
       </main>
     </ThemeProviderWrapper>
   );
